@@ -7,18 +7,15 @@ import { useAuth } from './auth/authContext'
 import { RouterContext } from './router'
 import type { RouterValue } from './router'
 import { LoginPage } from './pages/LoginPage'
-import { OverviewPage } from './pages/OverviewPage'
 import { SubmissionsPage } from './pages/SubmissionsPage'
 import { SubmissionsInboxPage } from './pages/SubmissionsInboxPage'
 import { SubmissionDetailsPage } from './pages/SubmissionDetailsPage'
 import { FeedbacksPage } from './pages/FeedbacksPage'
-import { NotificationsPage } from './pages/NotificationsPage'
-import { SettingsPage } from './pages/SettingsPage'
 import { isSupabaseConfigured, SUPABASE_CONFIG_ERROR } from './lib/supabase'
 import type { Route } from './types'
 
 function Dashboard() {
-  const [route, setRoute] = useState<Route>({ page: 'overview' })
+  const [route, setRoute] = useState<Route>({ page: 'submissions' })
 
   const navigate = useCallback((next: Route) => {
     setRoute(next)
@@ -32,8 +29,6 @@ function Dashboard() {
 
   const page = (() => {
     switch (route.page) {
-      case 'overview':
-        return <OverviewPage />
       case 'submissions':
         return <SubmissionsPage />
       case 'submissions-inbox':
@@ -53,10 +48,6 @@ function Dashboard() {
         )
       case 'feedbacks':
         return <FeedbacksPage />
-      case 'notifications':
-        return <NotificationsPage />
-      case 'settings':
-        return <SettingsPage />
     }
   })()
 

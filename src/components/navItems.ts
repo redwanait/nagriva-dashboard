@@ -8,9 +8,6 @@ export interface NavItem {
 }
 
 export const navItems: NavItem[] = [
-  { page: 'overview', label: 'Overview', icon: 'overview' },
   { page: 'submissions', label: 'Submissions', icon: 'inbox' },
   { page: 'feedbacks', label: 'Feedbacks', icon: 'message' },
-  { page: 'notifications', label: 'Notifications', icon: 'bell' },
-  { page: 'settings', label: 'Settings', icon: 'settings' },
 ]

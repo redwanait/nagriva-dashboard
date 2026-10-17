@@ -576,12 +576,6 @@ export const submissionsByCategory: Record<SubmissionCategoryId, Submission[]> =
     call_bookings: callBookings,
   }
 
-export const allSubmissions: Submission[] = [
-  ...inquiries,
-  ...projectInquiries,
-  ...callBookings,
-]
-
 export function getCategory(
   categoryId: SubmissionCategoryId,
 ): SubmissionCategory | undefined {

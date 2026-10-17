@@ -1,5 +1,10 @@
 import { useCallback, useEffect, useState } from 'react'
-import { fetchPublishedFeedbacks, insertFeedback } from '../data/feedbacks'
+import {
+  deleteFeedback as deleteFeedbackRecord,
+  fetchFeedbacks,
+  insertFeedback,
+  updateFeedback as updateFeedbackRecord,
+} from '../data/feedbacks'
 import { useAuth } from '../auth/authContext'
 import type { Feedback, FeedbackInput } from '../types'
 
@@ -23,7 +28,7 @@ export function useFeedbacks() {
 
     let active = true
 
-    fetchPublishedFeedbacks()
+    fetchFeedbacks()
       .then((result) => {
         if (!active) return
         setData(result)
@@ -57,5 +62,30 @@ export function useFeedbacks() {
     await insertFeedback(input)
   }, [])
 
-  return { data, loading, error, reload, createFeedback }
+  /** Update an existing feedback by id (never creates a duplicate). */
+  const updateFeedback = useCallback(
+    async (
+      id: string,
+      input: FeedbackInput,
+      currentPublishedAt?: string | null,
+    ) => {
+      await updateFeedbackRecord(id, input, currentPublishedAt)
+    },
+    [],
+  )
+
+  /** Delete a single feedback by id. */
+  const deleteFeedback = useCallback(async (id: string) => {
+    await deleteFeedbackRecord(id)
+  }, [])
+
+  return {
+    data,
+    loading,
+    error,
+    reload,
+    createFeedback,
+    updateFeedback,
+    deleteFeedback,
+  }
 }

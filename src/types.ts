@@ -58,8 +58,8 @@ export interface Submission {
 }
 
 /**
- * A published feedback record as read from `public.feedbacks`. Only published
- * rows are ever fetched by the dashboard, so `status` is informational.
+ * A feedback record as read from `public.feedbacks`. The dashboard loads every
+ * status so the administrator can moderate, edit, and delete entries.
  */
 export interface Feedback {
   id: string
@@ -73,8 +73,15 @@ export interface Feedback {
   publishedAt?: string
 }
 
-/** Status an administrator can choose when adding a feedback. */
-export type FeedbackStatus = 'pending' | 'published'
+/** Status an administrator can choose when adding or editing a feedback. */
+export type FeedbackStatus = 'pending' | 'published' | 'rejected'
+
+/** Every status the administrator may assign, in display order. */
+export const FEEDBACK_STATUSES: readonly FeedbackStatus[] = [
+  'published',
+  'pending',
+  'rejected',
+]
 
 /** Values an administrator can provide when adding a feedback. */
 export interface FeedbackInput {
@@ -86,32 +93,11 @@ export interface FeedbackInput {
   status: FeedbackStatus
 }
 
-export type NotificationType = 'submission' | 'status' | 'message'
-
-export interface AppNotification {
-  id: string
-  type: NotificationType
-  title: string
-  description: string
-  time: string
-  read: boolean
-}
-
-export interface ActivityItem {
-  id: string
-  title: string
-  description: string
-  time: string
-}
-
 export type PageName =
-  | 'overview'
   | 'submissions'
   | 'submissions-inbox'
   | 'details'
   | 'feedbacks'
-  | 'notifications'
-  | 'settings'
 
 export interface Route {
   page: PageName

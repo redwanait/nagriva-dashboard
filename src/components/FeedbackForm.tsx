@@ -2,6 +2,7 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { Card } from './Card'
 import { Icon } from './Icon'
+import { FEEDBACK_STATUSES } from '../types'
 import type { FeedbackInput, FeedbackStatus } from '../types'
 
 const NAME_MAX = 80
@@ -20,22 +21,33 @@ interface FieldErrors {
 }
 
 interface FeedbackFormProps {
+  mode?: 'create' | 'edit'
+  initialValues?: FeedbackInput
   onCancel: () => void
   onSubmitted: (status: FeedbackStatus) => void
-  createFeedback: (input: FeedbackInput) => Promise<void>
+  onSubmit: (input: FeedbackInput) => Promise<void>
 }
 
 export function FeedbackForm({
+  mode = 'create',
+  initialValues,
   onCancel,
   onSubmitted,
-  createFeedback,
+  onSubmit,
 }: FeedbackFormProps) {
-  const [authorName, setAuthorName] = useState('')
-  const [authorRole, setAuthorRole] = useState('')
-  const [authorCompany, setAuthorCompany] = useState('')
-  const [authorAvatarUrl, setAuthorAvatarUrl] = useState('')
-  const [content, setContent] = useState('')
-  const [status, setStatus] = useState<FeedbackStatus>('published')
+  const isEdit = mode === 'edit'
+  const [authorName, setAuthorName] = useState(initialValues?.authorName ?? '')
+  const [authorRole, setAuthorRole] = useState(initialValues?.authorRole ?? '')
+  const [authorCompany, setAuthorCompany] = useState(
+    initialValues?.authorCompany ?? '',
+  )
+  const [authorAvatarUrl, setAuthorAvatarUrl] = useState(
+    initialValues?.authorAvatarUrl ?? '',
+  )
+  const [content, setContent] = useState(initialValues?.content ?? '')
+  const [status, setStatus] = useState<FeedbackStatus>(
+    initialValues?.status ?? 'published',
+  )
   const [errors, setErrors] = useState<FieldErrors>({})
   const [submitting, setSubmitting] = useState(false)
   const [formError, setFormError] = useState<string | null>(null)
@@ -66,7 +78,7 @@ export function FeedbackForm({
     if (authorAvatarUrl.trim().length > AVATAR_MAX) {
       next.authorAvatarUrl = `Avatar URL must be ${AVATAR_MAX} characters or fewer.`
     }
-    if (status !== 'pending' && status !== 'published') {
+    if (!FEEDBACK_STATUSES.includes(status)) {
       next.status = 'Select a status.'
     }
 
@@ -83,7 +95,7 @@ export function FeedbackForm({
 
     setSubmitting(true)
     try {
-      await createFeedback({
+      await onSubmit({
         authorName: authorName.trim(),
         authorRole: authorRole.trim() || undefined,
         authorCompany: authorCompany.trim() || undefined,
@@ -105,10 +117,10 @@ export function FeedbackForm({
 
   return (
     <Card className="feedback-form-card">
-      <h2 className="card-title">Add feedback</h2>
+      <h2 className="card-title">{isEdit ? 'Edit feedback' : 'Add feedback'}</h2>
       <p className="card-hint">
-        Published feedback appears on the website immediately. Pending feedback
-        waits for review.
+        Published feedback appears on the website immediately. Pending and
+        rejected feedback stay hidden from the website.
       </p>
 
       <form className="feedback-form" onSubmit={handleSubmit} noValidate>
@@ -192,8 +204,11 @@ export function FeedbackForm({
                 setStatus(event.target.value as FeedbackStatus)
               }
             >
-              <option value="published">Published</option>
-              <option value="pending">Pending</option>
+              {FEEDBACK_STATUSES.map((option) => (
+                <option key={option} value={option}>
+                  {option.charAt(0).toUpperCase() + option.slice(1)}
+                </option>
+              ))}
             </select>
             {errors.status && (
               <span className="field-error">{errors.status}</span>
@@ -247,6 +262,8 @@ export function FeedbackForm({
                 <span className="spinner spinner-sm" aria-hidden="true" />
                 Saving…
               </>
+            ) : isEdit ? (
+              'Save changes'
             ) : (
               'Save feedback'
             )}

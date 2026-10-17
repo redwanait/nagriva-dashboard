@@ -10,6 +10,7 @@ const statusClass: Record<string, string> = {
   won: 'badge-won',
   done: 'badge-won',
   published: 'badge-won',
+  rejected: 'badge-rejected',
   lost: 'badge-lost',
   cancelled: 'badge-lost',
 }
